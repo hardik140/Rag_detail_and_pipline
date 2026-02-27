@@ -1,117 +1,62 @@
-# RAG Pipeline Configuration
+# RAG Pipeline Configuration (Simplified)
 
 # LLM Settings
 llm:
-  provider: "gemini"  # Options: openai, anthropic, cohere, gemini
-  model: "gemini-pro"
+  provider: "openai"
+  model: "gpt-4-turbo-preview"
   temperature: 0.7
   max_tokens: 2000
-  top_p: 1.0
 
 # Embeddings Settings
 embeddings:
-  provider: "huggingface"  # Options: openai, huggingface, sentence-transformers
-  model: "all-MiniLM-L6-v2"
-  dimension: 384
+  provider: "openai"
+  model: "text-embedding-3-small"
+  dimension: 1536
   batch_size: 100
-  
-  # Fallback settings
-  enable_fallback: true
-  fallback_provider: "huggingface"
-  fallback_model: "all-MiniLM-L6-v2"
 
 # Vector Store Settings
 vector_store:
-  type: "chroma"  # Options: chroma, faiss, pinecone
+  type: "chroma"
   collection_name: "rag_documents"
   persist_directory: "./data/chroma_db"
-  similarity_metric: "cosine"  # Options: cosine, euclidean, dot_product
-  
-  # Pinecone specific (if using pinecone)
-  pinecone:
-    environment: "gcp-starter"
-    index_name: "rag-index"
 
 # Document Processing Settings
 document_processing:
   chunk_size: 1000
   chunk_overlap: 200
   separators: ["\n\n", "\n", " ", ""]
-  
-  # Supported file types
-  supported_formats:
-    - pdf
-    - docx
-    - txt
-    - md
-    - html
 
 # Retrieval Settings
 retrieval:
-  search_type: "similarity"  # Options: similarity, mmr, similarity_score_threshold
-  k: 4  # Number of documents to retrieve
-  score_threshold: 0.7  # Minimum relevance score
-  
-  # MMR settings (if using mmr search)
-  mmr:
-    fetch_k: 20
-    lambda_mult: 0.5
+  search_type: "similarity"
+  k: 4
+  score_threshold: 0.7
 
-# Hybrid Search Settings (Vector + BM25 Keyword)
+# Hybrid Search Settings
 hybrid_search:
-  enabled: true  # Enable hybrid search
-  enable_fallback: true  # Use BM25 when vector search fails
-  enable_fusion: false  # Combine vector and BM25 results (slower but more comprehensive)
-  min_vector_results: 2  # Minimum vector results before triggering BM25 fallback
-  
-  # Score fusion weights (only used if enable_fusion is true)
-  fusion_weight_vector: 0.7  # Weight for vector search (0.0 - 1.0)
-  fusion_weight_bm25: 0.3    # Weight for BM25 search (0.0 - 1.0)
-  
-  # BM25 specific settings
-  bm25:
-    persist_path: "./data/bm25_index.pkl"  # Path to save BM25 index
+  enabled: true
+  min_vector_results: 2
 
-# RAG Chain Settings
-rag_chain:
-  chain_type: "stuff"  # Options: stuff, map_reduce, refine, map_rerank
-  return_source_documents: true
-  verbose: true
-
-# Conversation Memory Settings
+# Conversation Settings
 conversation:
-  enabled: true  # Enable conversation history
-  persist_directory: "./data/conversations"  # Path to store conversation history
-  max_history: 10  # Maximum conversation turns to keep in memory
-  include_in_context: true  # Include conversation history in retrieval context
-  
-  # ChromaDB collection for conversation history
-  collection_name: "conversation_history"
-  
-  # Memory types: buffer, summary, vector
-  memory_type: "buffer"  # buffer = keep all, summary = summarize old, vector = semantic search
-  
-  # Session management
-  session_timeout_minutes: 60  # Auto-end session after inactivity
-  auto_save: true  # Auto-save conversations to disk
+  enabled: true
+  persist_directory: "./data/conversations"
+  max_history: 10
 
 # Data Paths
 paths:
   documents: "./data/documents"
   processed: "./data/processed"
-  cache: "./data/cache"
   logs: "./logs"
 
 # API Settings
 api:
   host: "0.0.0.0"
   port: 8000
-  reload: true
-  workers: 1
 
 # Logging
 logging:
-  level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
   format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
   rotation: "500 MB"
   retention: "10 days"

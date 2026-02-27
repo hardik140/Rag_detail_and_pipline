@@ -9,7 +9,7 @@ from langchain_openai import ChatOpenAI
 from langchain_community.llms import Anthropic, Cohere
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from config import get_api_key
+from ..core.config import get_api_key
 
 
 class QueryEngine:

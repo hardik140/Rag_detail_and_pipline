@@ -1,52 +1,45 @@
 # Core RAG Dependencies
-langchain==0.1.0
-langchain-community==0.0.13
-langchain-openai==0.0.5
+langchain>=0.1.0
+langchain-community>=0.0.13
+langchain-openai>=0.0.5
+langchain-google-genai>=0.0.6
 
-# Vector Stores
-chromadb==0.4.22
-faiss-cpu==1.7.4
-pinecone-client==3.0.0
+# Vector Store
+chromadb>=0.4.22
 
 # Embeddings
-sentence-transformers==2.3.1
-openai==1.12.0
+sentence-transformers>=2.3.1
+openai>=1.12.0
 
-# Document Loaders & Processing
-pypdf==4.0.1
-python-docx==1.1.0
-beautifulsoup4==4.12.3
-unstructured==0.12.0
-markdown==3.5.2
+# Document Loaders
+pypdf>=4.0.1
+python-docx>=1.1.0
+beautifulsoup4>=4.12.3
+unstructured>=0.10.0
 
-# Text Splitting
-tiktoken==0.5.2
+# Text Processing
+tiktoken>=0.5.2
+rank-bm25>=0.2.2
+nltk>=3.8.1
 
-# Keyword Search (BM25)
-rank-bm25==0.2.2
-nltk==3.8.1
-
-# LLM Providers
-anthropic==0.18.0
-cohere==4.47
-google-generativeai==0.3.2
-langchain-google-genai==0.0.6
+# Optional LLM Providers (uncomment if needed)
+# anthropic>=0.18.0
+# cohere>=4.47
+# google-generativeai>=0.3.2
 
 # Data Processing
-numpy==1.26.3
-pandas==2.2.0
+numpy>=1.26.3
 
 # API & Environment
-python-dotenv==1.0.1
-fastapi==0.109.2
-uvicorn==0.27.0
-pydantic==2.6.0
+python-dotenv>=1.0.1
+fastapi>=0.109.2
+uvicorn>=0.27.0
+pydantic>=2.6.0
 
 # Utilities
-requests==2.31.0
-tqdm==4.66.1
-python-multipart==0.0.9
-pyyaml==6.0.1
+loguru>=0.7.2
+python-multipart>=0.0.9
+pyyaml>=6.0.1
 
 # Monitoring & Logging
 loguru==0.7.2

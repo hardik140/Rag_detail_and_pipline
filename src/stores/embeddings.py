@@ -7,7 +7,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from sentence_transformers import SentenceTransformer
 
-from config import get_api_key
+from ..core.config import get_api_key
 
 
 class EmbeddingsManager:

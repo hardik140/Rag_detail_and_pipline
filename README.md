@@ -1,42 +1,172 @@
 # RAG Pipeline
 
-A comprehensive Retrieval-Augmented Generation (RAG) pipeline built with LangChain, supporting multiple LLM providers, vector stores, and embedding models.
+A comprehensive, modular Retrieval-Augmented Generation (RAG) pipeline built with LangChain, supporting multiple LLM providers and advanced features.
 
-> **Latest Update (v1.1.0):** Added conversation memory with persistent chat history! Enable multi-turn conversations with context retention and session management. See the [Conversation Memory](#conversation-memory) section below.
+> **Version 2.0.0** - Complete modular redesign with simplified, production-ready architecture!
 
-## Table of Contents
+## 📖 Quick Summary
 
+### What This Is
+A production-ready RAG (Retrieval-Augmented Generation) system that allows you to:
+- Upload documents (PDF, DOCX, TXT, Markdown, HTML)
+- Query them using natural language
+- Get AI-powered answers with source citations
+- Maintain conversation context across multiple queries
+
+### What Changed (v1.x → v2.0)
+- **🏗️ Modularized** - Reorganized from flat structure to organized `src/` package
+- **🧹 Cleaned** - Removed 4 example files, 6 unused dependencies
+- **📝 Simplified** - Config reduced from 125 → 60 lines
+- **🔧 Improved** - Virtual env, Python 3.12 support, better docs
+- **✅ Production Ready** - Clean imports, proper structure, no errors
+
+### What's Inside
+```
+├── src/               # Modular source code
+│   ├── core/         # Configuration
+│   ├── loaders/      # Document loading
+│   ├── stores/       # Embeddings & vectors
+│   ├── search/       # Query engines
+│   └── memory/       # Conversations
+├── app.py            # FastAPI web server
+├── quickstart.py     # Usage example
+├── config.yaml       # Settings
+└── venv/            # Virtual environment
+```
+
+---
+
+## 📋 Table of Contents
+
+- [What's New in v2.0](#whats-new-in-v20)
 - [Features](#features)
+- [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Project Structure](#project-structure)
-- [File Descriptions](#file-descriptions)
-- [Usage Examples](#usage-examples)
+- [Configuration](#configuration)
 - [API Endpoints](#api-endpoints)
-- [Supported Document Formats](#supported-document-formats)
-- [Vector Stores](#vector-stores)
-- [Hybrid Search](#hybrid-search-vector--bm25)
-- [LLM Providers](#llm-providers)
-- [Embedding Models](#embedding-models)
-- [Conversation Memory](#conversation-memory)
-- [Advanced Features](#advanced-features)
+- [Usage Examples](#usage-examples)
+- [Changes from v1.x](#changes-from-v1x)
 - [Troubleshooting](#troubleshooting)
-- [Changelog](#changelog)
+- [Contributing](#contributing)
+
+---
+
+## 🎉 What's New in v2.0
+
+### Major Improvements
+
+#### 1. **Modularized Architecture**
+Complete restructure into organized packages:
+```
+src/
+├── core/          - Configuration management
+├── loaders/       - Document loading & processing
+├── stores/        - Embeddings & vector storage
+├── search/        - Query engines & hybrid search
+├── memory/        - Conversation management
+└── pipeline.py    - Main RAG orchestrator
+```
+
+#### 2. **Simplified & Cleaned**
+- ✅ Removed 4 example files (consolidated into `quickstart.py`)
+- ✅ Reduced config from 125 lines to 60 lines
+- ✅ Removed unused dependencies (FAISS, Pinecone, pandas, etc.)
+- ✅ Cleaned up complex configuration options
+- ✅ Only 2 files in root: `app.py` and `quickstart.py`
+
+#### 3. **Production Ready**
+- ✅ Virtual environment setup
+- ✅ Python 3.12 compatible
+- ✅ Clean imports with no errors
+- ✅ Comprehensive documentation
+- ✅ Professional code organization
+
+#### 4. **What Was Removed**
+- `example.py`, `example_conversation.py`, `example_gemini.py`, `example_hybrid_search.py`
+- Old flat-structure module files (moved to `src/`)
+- Unused vector stores (FAISS, Pinecone - can be re-enabled if needed)
+- Complex fallback configurations
+- Deprecated code patterns
+
+---
 
 ## Features
 
 - 🤖 **Multiple LLM Providers**: OpenAI, Anthropic, Cohere, Google Gemini
-- 📚 **Vector Store Options**: ChromaDB, FAISS, Pinecone
-- 🔍 **Embedding Models**: OpenAI, HuggingFace, Sentence Transformers
-- 🔄 **Hybrid Search**: Vector search with BM25 keyword fallback for robust retrieval
-- 💾 **Embeddings Fallback**: Automatic fallback to local models if API fails
-- 💬 **Conversation Memory**: Persistent chat history with ChromaDB storage
+- 📚 **Vector Store**: ChromaDB for efficient document retrieval
+- 🔍 **Hybrid Search**: Vector search with BM25 keyword fallback
+- 💬 **Conversation Memory**: Persistent chat history with context retention
 - 📄 **Document Support**: PDF, DOCX, TXT, Markdown, HTML
-- ⚙️ **Configurable**: YAML-based configuration
-- 🚀 **API Ready**: FastAPI integration for serving
-- 📊 **Monitoring**: Built-in logging and statistics
+- ⚙️ **Configurable**: Simple YAML-based configuration
+- 🚀 **API Ready**: FastAPI integration with full REST API
+- 🎯 **Modular Design**: Clean, organized codebase structure
+- 📊 **Production Ready**: Comprehensive logging and error handling
+
+---
+
+## 📁 Project Structure
+
+```
+rag_pipleine/
+├── src/                          # Main source code (modular)
+│   ├── core/                     # Core utilities
+│   │   ├── config.py            # Configuration management
+│   │   └── __init__.py
+│   ├── loaders/                  # Document loading
+│   │   ├── document_loader.py   # Multi-format loader
+│   │   └── __init__.py
+│   ├── stores/                   # Storage components
+│   │   ├── embeddings.py        # Embeddings management
+│   │   ├── vector_store.py      # Vector store handling
+│   │   └── __init__.py
+│   ├── search/                   # Search & query
+│   │   ├── query_engine.py      # LLM query engine
+│   │   ├── hybrid_search.py     # Hybrid search orchestrator
+│   │   ├── keyword_search.py    # BM25 keyword search
+│   │   └── __init__.py
+│   ├── memory/                   # Conversation
+│   │   ├── conversation_memory.py # Chat history
+│   │   └── __init__.py
+│   ├── pipeline.py              # Main RAG pipeline
+│   └── __init__.py
+├── venv/                         # Virtual environment
+├── data/                         # Data directory
+│   ├── documents/               # Input documents
+│   ├── chroma_db/              # Vector database
+│   ├── conversations/          # Chat history
+│   └── processed/              # Processed files
+├── logs/                        # Application logs
+├── app.py                       # FastAPI web server
+├── quickstart.py               # Usage example
+├── config.yaml                 # Configuration file
+├── requirements.txt            # Dependencies
+├── .env                        # API keys (create this)
+├── .gitignore                  # Git ignore rules
+├── LICENSE                     # License
+├── README.md                   # This file
+├── MIGRATION.md               # v1.x → v2.0 guide
+├── VENV_GUIDE.md             # Virtual env help
+└── SETUP_COMPLETE.md         # Setup checklist
+```
+
+### Key Files
+
+- **[src/pipeline.py](src/pipeline.py)** - Main RAG pipeline orchestrator
+- **[app.py](app.py)** - FastAPI REST API server
+- **[quickstart.py](quickstart.py)** - Example usage script
+- **[config.yaml](config.yaml)** - Configuration settings
+- **[requirements.txt](requirements.txt)** - Python dependencies
+
+---
 
 ## Installation
+
+### Prerequisites
+- Python 3.8 or higher
+- Virtual environment (recommended)
+
+### Steps
 
 1. **Clone the repository**
 ```bash
@@ -44,7 +174,7 @@ git clone <your-repo-url>
 cd rag_pipleine
 ```
 
-2. **Create virtual environment**
+2. **Create and activate virtual environment**
 ```bash
 python -m venv venv
 
@@ -61,11 +191,14 @@ pip install -r requirements.txt
 ```
 
 4. **Setup environment variables**
-```bash
-# Copy the example env file
-copy .env.example .env
+Create a `.env` file in the root directory:
+```env
+OPENAI_API_KEY=your_openai_key_here
 
-# Edit .env and add your API keys
+# Optional: Add other provider keys as needed
+ANTHROPIC_API_KEY=your_anthropic_key
+COHERE_API_KEY=your_cohere_key
+GOOGLE_API_KEY=your_google_key
 ```
 
 ## Quick Start
@@ -73,21 +206,22 @@ copy .env.example .env
 ### 1. Basic Usage
 
 ```python
-from rag_pipeline import RAGPipeline
+from src.pipeline import RAGPipeline
 
 # Initialize pipeline
 pipeline = RAGPipeline()
 
 # Ingest documents
 result = pipeline.ingest_documents("./data/documents")
-print(result)
+print(f"Status: {result['status']}")
+print(f"Documents processed: {result['documents_processed']}")
 
 # Query the system
-response = pipeline.query("What is the main topic?")
-print(response["answer"])
+response = pipeline.query("What is the main topic of the documents?")
+print(f"Answer: {response['answer']}")
 ```
 
-### 2. Using the API
+### 2. Using the API Server
 
 Start the FastAPI server:
 
@@ -95,360 +229,254 @@ Start the FastAPI server:
 python app.py
 ```
 
-Access the API at `http://localhost:8000/docs`
+The API server will start at `http://localhost:8000`
 
-### 3. Conversation Mode (NEW!)
+Access the interactive API documentation at:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+**Example API calls:**
+
+```bash
+# Ingest documents
+curl -X POST "http://localhost:8000/ingest" \
+  -H "Content-Type: application/json" \
+  -d '{"document_path": "./data/documents"}'
+
+# Query
+curl -X POST "http://localhost:8000/query" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What is RAG?", "return_sources": true}'
+
+# Conversation query
+curl -X POST "http://localhost:8000/conversation/query" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Tell me about the documents", "session_id": "user123"}'
+```
+
+### 3. Conversation Mode
 
 ```python
-from rag_pipeline import RAGPipeline
+from src.pipeline import RAGPipeline
 
-# Initialize pipeline
 pipeline = RAGPipeline()
 
 # Start a conversation
-session_id = pipeline.start_conversation()
+response = pipeline.conversation_query(
+    "Tell me about the documents",
+    session_id="user123"
+)
+print(response["answer"])
 
-# Multi-turn conversation with context
-response1 = pipeline.conversation_query("What is RAG?")
-response2 = pipeline.conversation_query("How does it work?")  # Uses previous context
-response3 = pipeline.conversation_query("What are its benefits?")  # Continues conversation
-
-# Save and end
-pipeline.end_conversation(save=True)
-
-# See example_conversation.py for more examples
+# Continue the conversation with context
+response = pipeline.conversation_query(
+    "Can you elaborate on that?",
+    session_id="user123"
+)
+print(response["answer"])
 ```
-
-### 4. Configuration
-
-Edit `config.yaml` to customize:
-
-- LLM settings (provider, model, temperature)
-- Embeddings configuration
-- Vector store settings
-- Document processing parameters
-- Retrieval settings
 
 ## Project Structure
 
 ```
 rag_pipleine/
-├── rag_pipeline.py           # Main pipeline orchestration
-├── document_loader.py        # Document loading and processing
-├── vector_store.py           # Vector store management
-├── embeddings.py             # Embeddings management
-├── query_engine.py           # Query processing and generation
-├── conversation_memory.py    # Conversation history management
-├── hybrid_search.py          # Hybrid vector + BM25 search
-├── keyword_search.py         # BM25 keyword search
-├── config.py                 # Configuration management
-├── config.yaml               # Configuration file
-├── app.py                    # FastAPI application
-├── example.py                # Basic usage examples
-├── example_hybrid_search.py  # Hybrid search examples
-├── example_gemini.py         # Gemini LLM examples
-├── example_conversation.py   # Conversation feature examples
-├── requirements.txt          # Python dependencies
-├── .env.example              # Environment variables template
-├── README.md                 # This file
-└── data/
-    ├── documents/            # Place your documents here
-    ├── chroma_db/            # Vector store persistence
-    ├── conversations/        # Conversation history storage
-    ├── processed/            # Processed documents
-    ├── cache/                # Cache directory
-    └── logs/                 # Application logs
+├── src/                          # Main source code (modular architecture)
+│   ├── core/                     # Core configuration and utilities
+│   │   ├── config.py            # Configuration management
+│   │   └── __init__.py
+│   ├── loaders/                  # Document loading and processing
+│   │   ├── document_loader.py   # Multi-format document loader
+│   │   └── __init__.py
+│   ├── stores/                   # Storage components
+│   │   ├── embeddings.py        # Embeddings management
+│   │   ├── vector_store.py      # Vector store management
+│   │   └── __init__.py
+│   ├── search/                   # Search and query engines
+│   │   ├── query_engine.py      # Query handling and LLM integration
+│   │   ├── hybrid_search.py     # Hybrid search orchestration
+│   │   ├── keyword_search.py    # BM25 keyword search
+│   │   └── __init__.py
+│   ├── memory/                   # Conversation memory
+│   │   ├── conversation_memory.py # Session and history management
+│   │   └── __init__.py
+│   ├── pipeline.py              # Main RAG pipeline orchestrator
+│   └── __init__.py
+├── data/                         # Data directory (created automatically)
+│   ├── documents/               # Place your documents here
+│   ├── chroma_db/              # Vector database storage
+│   ├── conversations/          # Conversation history
+│   └── processed/              # Processed documents
+├── logs/                        # Application logs
+├── app.py                       # FastAPI application entry point
+├── config.yaml                  # Configuration file
+├── requirements.txt             # Python dependencies
+├── .env                         # Environment variables (create this)
+├── LICENSE                      # License file
+└── README.md                    # This file
 ```
 
-## File Descriptions
+## Configuration
 
-### Core Modules
+Edit `config.yaml` to customize the pipeline:
 
-| File | Purpose |
-|------|---------|
-| `rag_pipeline.py` | Main orchestrator that coordinates all components and provides the primary API |
-| `document_loader.py` | Handles loading and parsing documents (PDF, DOCX, TXT, MD, HTML) |
-| `vector_store.py` | Manages vector databases (ChromaDB, FAISS, Pinecone) for semantic search |
-| `embeddings.py` | Generates embeddings using OpenAI, HuggingFace, or Sentence Transformers |
-| `query_engine.py` | Processes queries and generates responses using LLM providers |
-| `conversation_memory.py` | **NEW** - Manages conversation sessions with persistent history |
-| `hybrid_search.py` | Combines vector search with BM25 keyword search for robust retrieval |
-| `keyword_search.py` | Implements BM25 algorithm for keyword-based document search |
-| `config.py` | Configuration management with Pydantic models and validation |
+```yaml
+# LLM Settings
+llm:
+  provider: "openai"             # Options: openai, anthropic, cohere, gemini
+  model: "gpt-4-turbo-preview"
+  temperature: 0.7
+  max_tokens: 2000
 
-### Configuration & Deployment
+# Embeddings Settings
+embeddings:
+  provider: "openai"
+  model: "text-embedding-3-small"
+  dimension: 1536
 
-| File | Purpose |
-|------|---------|
-| `config.yaml` | YAML configuration file for all pipeline settings |
-| `.env.example` | Template for environment variables (API keys) |
-| `app.py` | FastAPI application with REST endpoints |
-| `requirements.txt` | Python package dependencies |
+# Vector Store Settings
+vector_store:
+  type: "chroma"
+  collection_name: "rag_documents"
+  persist_directory: "./data/chroma_db"
 
-### Examples
+# Document Processing
+document_processing:
+  chunk_size: 1000
+  chunk_overlap: 200
 
-| File | Purpose |
-|------|---------|
-| `example.py` | Basic usage examples for the RAG pipeline |
-| `example_hybrid_search.py` | Demonstrates hybrid search capabilities |
-| `example_gemini.py` | Shows how to use Google Gemini LLM |
-| `example_conversation.py` | **NEW** - Conversation feature examples and API usage |
+# Retrieval
+retrieval:
+  search_type: "similarity"
+  k: 4                          # Number of documents to retrieve
+  score_threshold: 0.7
 
-### Documentation
+# Hybrid Search
+hybrid_search:
+  enabled: true                 # Enable/disable hybrid search
+  min_vector_results: 2         # Trigger BM25 fallback threshold
 
-| File | Purpose |
-|------|---------|
-| `README.md` | Comprehensive documentation (this file) |
-| `LICENSE` | MIT License information |
-| `.gitignore` | Git ignore patterns for cache, logs, and sensitive files |
+# Conversation Memory
+conversation:
+  enabled: true                 # Enable/disable conversation history
+  max_history: 10               # Maximum conversation turns to keep
 
-## Usage Examples
+# API Settings
+api:
+  host: "0.0.0.0"
+  port: 8000
 
-### Document Ingestion
-
-```python
-from rag_pipeline import RAGPipeline
-
-pipeline = RAGPipeline()
-
-# Ingest from a directory
-pipeline.ingest_documents("./data/documents")
-
-# Ingest a single file
-pipeline.ingest_documents("./data/documents/example.pdf")
-```
-
-### Querying
-
-```python
-# Simple query
-response = pipeline.query("What is machine learning?")
-print(response["answer"])
-
-# Query with sources
-response = pipeline.query("Explain neural networks", return_sources=True)
-print(response["answer"])
-print(f"Sources: {len(response['sources'])}")
-for source in response["sources"]:
-    print(f"- {source['metadata']}")
-```
-
-### Similarity Search
-
-```python
-# Find similar documents
-docs = pipeline.get_similar_documents("artificial intelligence", k=5)
-for doc in docs:
-    print(doc["content"][:200])
-```
-
-### Custom Configuration
-
-```python
-from config import Config, LLMConfig, EmbeddingsConfig
-from rag_pipeline import RAGPipeline
-
-# Create custom config
-custom_config = Config(
-    llm=LLMConfig(
-        provider="openai",
-        model="gpt-4",
-        temperature=0.5
-    ),
-    embeddings=EmbeddingsConfig(
-        provider="openai",
-        model="text-embedding-3-large"
-    ),
-    # ... other settings
-)
-
-# Use custom config
-pipeline = RAGPipeline(custom_config)
+# Logging
+logging:
+  level: "INFO"
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
 ```
 
 ## API Endpoints
 
-### POST /ingest
-Ingest documents into the system
+### Document Management
 
-```bash
-curl -X POST "http://localhost:8000/ingest" \
-  -H "Content-Type: application/json" \
-  -d '{"document_path": "./data/documents"}'
+#### `POST /ingest`
+Ingest documents from a file or directory.
+
+**Request:**
+```json
+{
+  "document_path": "./data/documents"
+}
 ```
 
-### POST /query
-Query the RAG system
-
-```bash
-curl -X POST "http://localhost:8000/query" \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What is AI?", "return_sources": true}'
+**Response:**
+```json
+{
+  "status": "success",
+  "documents_processed": 42,
+  "message": "Successfully processed 42 document chunks"
+}
 ```
 
-### GET /health
-Health check endpoint
+#### `POST /upload`
+Upload a document file directly.
 
-```bash
-curl "http://localhost:8000/health"
+**Request:** Multipart form data with file
+
+**Response:**
+```json
+{
+  "status": "success",
+  "filename": "document.pdf",
+  "message": "Document uploaded and processed successfully"
+}
 ```
 
-### Conversation Endpoints
+### Query Endpoints
 
-**POST /conversation/session**  
-Create a new conversation session
+#### `POST /query`
+Standard query without conversation context.
 
-```bash
-curl -X POST "http://localhost:8000/conversation/session" \
-  -H "Content-Type: application/json" \
-  -d '{"session_id": "my_session"}'
+**Request:**
+```json
+{
+  "question": "What is RAG?",
+  "return_sources": true
+}
 ```
 
-**POST /conversation/query**  
-Query with conversation context
-
-```bash
-curl -X POST "http://localhost:8000/conversation/query" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "What is RAG?",
-    "session_id": "my_session",
-    "return_sources": true
-  }'
+**Response:**
+```json
+{
+  "question": "What is RAG?",
+  "answer": "RAG stands for Retrieval-Augmented Generation...",
+  "status": "success",
+  "sources": [
+    {"page_content": "...", "metadata": {...}},
+    ...
+  ],
+  "num_sources": 4
+}
 ```
 
-**GET /conversation/history**  
-Get conversation history
+#### `POST /conversation/query`
+Query with conversation context and memory.
 
-```bash
-curl "http://localhost:8000/conversation/history?format=list"
+**Request:**
+```json
+{
+  "question": "Tell me about RAG",
+  "session_id": "user123",
+  "return_sources": true
+}
 ```
 
-**GET /conversation/sessions**  
-List all saved sessions
-
-```bash
-curl "http://localhost:8000/conversation/sessions"
+**Response:**
+```json
+{
+  "question": "Tell me about RAG",
+  "answer": "RAG is a technique that...",
+  "status": "success",
+  "session_id": "user123",
+  "message_count": 1,
+  "sources": [...]
+}
 ```
 
-**DELETE /conversation/session**  
-End current session
+### Session Management
 
-```bash
-curl -X DELETE "http://localhost:8000/conversation/session?save=true"
-```
+#### `POST /conversation/session`
+Create a new conversation session.
+
+#### `DELETE /conversation/session/{session_id}`
+Clear conversation history for a session.
+
+#### `GET /health`
+Health check endpoint.
 
 ## Supported Document Formats
 
-- **PDF** (.pdf)
-- **Word** (.docx)
-- **Text** (.txt)
-- **Markdown** (.md)
-- **HTML** (.html)
-
-## Vector Stores
-
-### ChromaDB (Default)
-```yaml
-vector_store:
-  type: "chroma"
-  persist_directory: "./data/chroma_db"
-```
-
-### FAISS
-```yaml
-vector_store:
-  type: "faiss"
-  persist_directory: "./data/faiss_index"
-```
-
-### Pinecone
-```yaml
-vector_store:
-  type: "pinecone"
-  pinecone:
-    environment: "gcp-starter"
-    index_name: "rag-index"
-```
-
-## Hybrid Search (Vector + BM25)
-
-The pipeline includes **hybrid search** that combines semantic vector search with BM25 keyword search for robust retrieval.
-
-### How It Works
-
-1. **Primary**: Vector search using embeddings (semantic similarity)
-2. **Fallback**: BM25 keyword search when vector search fails or returns insufficient results
-3. **Fusion**: Optional mode that combines both methods with weighted scores
-
-### Configuration
-
-```yaml
-hybrid_search:
-  enabled: true                    # Enable hybrid search
-  enable_fallback: true            # Use BM25 when vector search fails
-  enable_fusion: false             # Combine vector and BM25 results
-  min_vector_results: 2            # Trigger fallback if fewer results
-  fusion_weight_vector: 0.7        # Vector search weight (fusion mode)
-  fusion_weight_bm25: 0.3         # BM25 search weight (fusion mode)
-```
-
-### Usage Examples
-
-**Automatic Fallback (Default)**
-```python
-# Automatically uses BM25 if vector search fails
-response = pipeline.query("your question")
-```
-
-**Direct BM25 Search**
-```python
-# Use BM25 keyword search directly
-results = pipeline.hybrid_search.search(
-    "specific keywords",
-    k=5,
-    search_type="bm25"
-)
-```
-
-**Fusion Search**
-```python
-# Combine vector and BM25 results
-results = pipeline.hybrid_search.search(
-    "your query",
-    k=5,
-    search_type="fusion"
-)
-```
-
-### Benefits
-
-- ✅ **Robustness**: Falls back to keyword search when semantic search fails
-- ✅ **Better Coverage**: Handles both semantic queries and specific keyword matches
-- ✅ **Automatic**: No code changes needed, works transparently
-- ✅ **Configurable**: Fine-tune fallback behavior and fusion weights
-
-### Example
-
-```python
-from rag_pipeline import RAGPipeline
-
-pipeline = RAGPipeline()  # Hybrid search enabled by default
-
-# Ingest documents (indexes both vector and BM25)
-pipeline.ingest_documents("./data/documents")
-
-# Query automatically uses hybrid search with fallback
-response = pipeline.query("What is machine learning?")
-
-# Check which search method was used
-if response.get('sources'):
-    for source in response['sources']:
-        search_type = source['metadata'].get('search_type')
-        print(f"Search method: {search_type}")  # 'vector' or 'bm25'
-```
-
-For detailed examples, see [example_hybrid_search.py](example_hybrid_search.py).
+- **PDF** (`.pdf`)
+- **Word Documents** (`.docx`)
+- **Text Files** (`.txt`)
+- **Markdown** (`.md`)
+- **HTML** (`.html`)
 
 ## LLM Providers
 
@@ -456,16 +484,14 @@ For detailed examples, see [example_hybrid_search.py](example_hybrid_search.py).
 ```yaml
 llm:
   provider: "openai"
-  model: "gpt-4-turbo-preview"
-  temperature: 0.7
+  model: "gpt-4-turbo-preview"  # or gpt-3.5-turbo
 ```
 
-### Anthropic
+### Anthropic Claude
 ```yaml
 llm:
   provider: "anthropic"
   model: "claude-3-opus-20240229"
-  temperature: 0.7
 ```
 
 ### Cohere
@@ -473,7 +499,6 @@ llm:
 llm:
   provider: "cohere"
   model: "command"
-  temperature: 0.7
 ```
 
 ### Google Gemini
@@ -481,261 +506,223 @@ llm:
 llm:
   provider: "gemini"
   model: "gemini-pro"
-  temperature: 0.7
 ```
-
-**Note**: Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-
-## Embedding Models
-
-### OpenAI
-```yaml
-embeddings:
-  provider: "openai"
-  model: "text-embedding-3-small"
-```
-
-### HuggingFace
-```yaml
-embeddings:
-  provider: "huggingface"
-  model: "all-MiniLM-L6-v2"
-```
-
-### Embeddings with Fallback
-```yaml
-embeddings:
-  provider: "openai"
-  model: "text-embedding-3-small"
-  enable_fallback: true
-  fallback_provider: "huggingface"
-  fallback_model: "all-MiniLM-L6-v2"
-```
-
-**Benefits**:
-- Automatic fallback if primary embeddings fail
-- Use local models (HuggingFace) as backup for reliability
-- No additional API costs for fallback embeddings
-- Ensures continuous operation even during API outages
-
-### Recommended Setup: Gemini + all-MiniLM-L6-v2
-
-For cost-effective and efficient RAG:
-```yaml
-llm:
-  provider: "gemini"
-  model: "gemini-pro"
-  
-embeddings:
-  provider: "huggingface"
-  model: "all-MiniLM-L6-v2"
-  dimension: 384
-```
-
-**Advantages**:
-- ✅ Free local embeddings (no API costs)
-- ✅ Competitive Gemini pricing
-- ✅ Fast local processing for embeddings
-- ✅ Better privacy (embeddings stay local)
-- ✅ No rate limits on embeddings
-- ✅ Works offline for embedding generation
-
-See [example_gemini.py](example_gemini.py) for demo.
 
 ## Advanced Features
 
-### Custom Prompt Templates
-
-```python
-custom_prompt = """
-Given the context below, answer the question.
-Be concise and specific.
-
-Context: {context}
-Question: {question}
-Answer:
-"""
-
-response = pipeline.query(
-    "What is RAG?",
-    custom_prompt=custom_prompt
-)
-```
-
-### Batch Queries
-
-```python
-questions = [
-    "What is machine learning?",
-    "Explain deep learning",
-    "What are neural networks?"
-]
-
-results = pipeline.query_engine.batch_query(questions)
-for result in results:
-    print(f"Q: {result['question']}")
-    print(f"A: {result['answer']}\n")
-```
+### Hybrid Search
+Combines vector similarity search with BM25 keyword search for better retrieval:
+- Primary: Vector search using embeddings
+- Fallback: BM25 keyword search when vector results are insufficient
+- Configurable threshold for fallback triggering
 
 ### Conversation Memory
+Persistent chat history with:
+- Session-based conversation tracking
+- Automatic context inclusion in queries
+- ChromaDB-backed storage for semantic search
+- Configurable history length
 
-Enable persistent conversation history with context-aware responses:
+### Logging
+Comprehensive logging with:
+- Automatic log rotation
+- Configurable log levels
+- File and console output
+- Structured log format
 
-```python
-# Initialize pipeline with conversation enabled
-pipeline = RAGPipeline()
+## Development
 
-# Start a conversation session
-session_id = pipeline.start_conversation()
-
-# Multi-turn conversation
-response1 = pipeline.conversation_query("What is RAG?")
-response2 = pipeline.conversation_query("How does it work?")  # Uses previous context
-response3 = pipeline.conversation_query("What are its advantages?")  # Continues conversation
-
-# Get conversation history
-history = pipeline.get_conversation_history(format="list")
-
-# Save and end session
-pipeline.end_conversation(save=True)
-
-# Resume a previous conversation
-pipeline.conversation_query(
-    "Can you summarize our discussion?", 
-    session_id=session_id
-)
-```
-
-**Configuration** (`config.yaml`):
-
-```yaml
-conversation:
-  enabled: true
-  persist_directory: "./data/conversations"
-  max_history: 10  # Number of message pairs to keep in context
-  collection_name: "conversation_history"
-  memory_type: "buffer"  # or "vector" for semantic search
-  session_timeout_minutes: 60
-  auto_save: true
-```
-
-**API Endpoints**:
-
+### Running Tests
 ```bash
-# Create session
-POST /conversation/session
+# Install dev dependencies
+pip install pytest pytest-cov
 
-# Conversation query
-POST /conversation/query
-{
-  "question": "What is RAG?",
-  "session_id": "optional_session_id",
-  "return_sources": true
-}
+# Run tests
+pytest
 
-# Get history
-GET /conversation/history?format=list
-
-# List all sessions
-GET /conversation/sessions
-
-# End session
-DELETE /conversation/session?save=true
+# Run with coverage
+pytest --cov=src
 ```
 
-**See `example_conversation.py` for more examples.**
+### Code Style
+```bash
+# Install formatters
+pip install black isort
+
+# Format code
+black src/
+isort src/
+```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **API Key Errors**
-   - Ensure your `.env` file contains valid API keys
-   - Check that the `.env` file is in the root directory
+**ModuleNotFoundError**
+- Make sure you're in the virtual environment
+- Run `pip install -r requirements.txt`
 
-2. **Vector Store Issues**
-   - Delete the vector store directory and re-ingest documents
-   - Ensure sufficient disk space for embeddings
+**API Key Errors**
+- Check your `.env` file exists and has correct keys
+- Verify the provider name matches in `config.yaml`
 
-3. **Memory Issues**
-   - Reduce `chunk_size` in config.yaml
-   - Process documents in smaller batches
-   - Use FAISS instead of ChromaDB for large datasets
+**Document Loading Issues**
+- Ensure documents are in supported formats
+- Check file permissions and paths
+- View logs in `./logs/` for detailed errors
 
-## Performance Tips
+**ChromaDB Issues**
+- Delete `./data/chroma_db/` to reset the vector store
+- Ensure sufficient disk space
 
-1. **Use GPU for embeddings** (if available)
-   ```python
-   # In embeddings.py, change device to 'cuda'
-   model_kwargs={'device': 'cuda'}
-   ```
+---
 
-2. **Optimize chunk size**
-   - Smaller chunks: Better precision, more storage
-   - Larger chunks: Better context, less storage
+## 🔄 Changes from v1.x
 
-3. **Adjust retrieval parameters**
-   ```yaml
-   retrieval:
-     k: 4  # Reduce for faster queries
-     search_type: "mmr"  # Use MMR for diverse results
-   ```
+### What Changed in v2.0
 
-## Changelog
+#### ✅ Code Organization
+**Before (v1.x):** All modules in root directory (flat structure)
+```
+├── config.py
+├── rag_pipeline.py
+├── document_loader.py
+├── embeddings.py
+├── vector_store.py
+├── query_engine.py
+├── hybrid_search.py
+├── keyword_search.py
+├── conversation_memory.py
+├── example.py
+├── example_conversation.py
+├── example_gemini.py
+└── example_hybrid_search.py
+```
 
-### Version 1.1.0 (February 2026)
+**After (v2.0):** Organized modular structure
+```
+├── src/
+│   ├── core/          # Config
+│   ├── loaders/       # Document loading
+│   ├── stores/        # Embeddings & vectors
+│   ├── search/        # Query & search
+│   └── memory/        # Conversations
+├── app.py             # API server
+└── quickstart.py      # Single example
+```
 
-**🎉 New Features:**
-- ✅ **Conversation Memory**: Added persistent chat history with ChromaDB storage
-  - Multi-turn conversations with context retention
-  - Session management with custom IDs
-  - Auto-save and timeout support
-  - Semantic search across conversation history
-  - New API endpoints for conversation management
-  - See `example_conversation.py` for usage examples
+#### ✅ Import Changes
+**Old:**
+```python
+from rag_pipeline import RAGPipeline
+from config import config
+```
 
-**🔧 Improvements:**
-- Enhanced README with conversation feature documentation
-- Added conversation configuration section in `config.yaml`
-- Updated project structure with `conversation_memory.py` module
-- Added comprehensive conversation examples
+**New:**
+```python
+from src.pipeline import RAGPipeline
+from src.core.config import config
+```
 
-**🧹 Maintenance:**
-- Removed unnecessary files:
-  - `test_rag_pipeline.py` (test dependencies not installed)
-  - `setup.py` (not needed for direct usage)
-  - `__init__.py` (not used in current setup)
-- Cleaned up project structure for easier navigation
+#### ✅ Configuration Simplified
+- Reduced from **125+ lines** to **~60 lines**
+- Removed complex options: RAG chain settings, MMR configs, Pinecone specifics
+- Made optional LLM providers configurable
+- Sensible defaults for most settings
 
-### Version 1.0.0 (Initial Release)
+#### ✅ Dependencies Cleaned
+**Removed:**
+- `faiss-cpu` (not used by default)
+- `pinecone-client` (optional, can be re-added)
+- `pandas` (not needed)
+- `markdown` (covered by unstructured)
+- `requests` (redundant)
+- `tqdm` (not essential)
 
-**Core Features:**
-- Multi-provider LLM support (OpenAI, Anthropic, Cohere, Gemini)
-- Multiple vector stores (ChromaDB, FAISS, Pinecone)
-- Hybrid search with BM25 keyword fallback
-- Document processing for PDF, DOCX, TXT, MD, HTML
-- FastAPI REST API
-- Embeddings fallback to local models
-- YAML-based configuration
+**Added:**
+- `loguru` (better logging)
+
+**Total:** From 20+ to 17 core dependencies
+
+#### ✅ Files Removed
+- `example.py` → Consolidated into `quickstart.py`
+- `example_conversation.py` → Consolidated
+- `example_gemini.py` → Consolidated
+- `example_hybrid_search.py` → Consolidated
+- `test_setup.py` → Removed after verification
+- All old root-level modules → Moved to `src/`
+
+#### ✅ New Features
+- Virtual environment setup guide
+- Comprehensive README (this file)
+- Migration documentation
+- Setup completion guide
+- Better error messages
+- Cleaner code structure
+
+### Compatibility Notes
+
+#### ✓ Fully Compatible (No Migration Needed)
+- All your **data** (vector stores, conversations)
+- `.env` file and API keys
+- Document formats
+- API endpoints
+- LLM providers
+
+#### ⚠️ Requires Update
+- Python import statements (see above)
+- Any custom scripts using old imports
+- Configuration file (optional - old still works)
+
+### Benefits of v2.0
+1. **Easier to Maintain** - Clear module boundaries
+2. **Better Scalability** - Add features in isolation
+3. **Simpler Setup** - Less configuration overhead
+4. **Professional Structure** - Follows Python best practices
+5. **Cleaner Codebase** - Remove unused/example code
+6. **Better Testing** - Modular design enables unit tests
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+## Changelog
 
-MIT License - feel free to use this project for your own purposes.
+### Version 2.0.0 (February 27, 2026) - Current
+- ✨ **Complete modular redesign**
+  - Organized into `src/` package structure
+  - Separated concerns: core, loaders, stores, search, memory
+- 🧹 **Cleaned codebase**
+  - Removed 4 example files (consolidated to quickstart.py)
+  - Removed unused dependencies (6 packages)
+  - Simplified configuration (125 → 60 lines)
+- 🔧 **Improved infrastructure**
+  - Virtual environment setup
+  - Python 3.12 compatibility
+  - Better error handling
+  - Comprehensive logging
+- 📚 **Enhanced documentation**
+  - Complete README with all changes
+  - Migration guide (v1.x → v2.0)
+  - Virtual environment guide
+  - Setup completion checklist
+- 🎯 **Production ready**
+  - Clean imports with no errors
+  - Professional code organization
+  - Proper package structure
+  - Type hints and docstrings
 
-## Acknowledgments
+### Version 1.1.0
+- Added conversation memory
+- Hybrid search implementation
 
-- Built with [LangChain](https://github.com/langchain-ai/langchain)
-- Uses [ChromaDB](https://www.trychroma.com/) for vector storage
-- Powered by various LLM providers
-
-## Support
-
-For issues or questions, please open an issue on GitHub or contact the maintainers.
-
----
-
-**Happy RAG-ing! 🚀**
+### Version 1.0.0
+- Initial release
+- Basic RAG pipeline
+- Multiple LLM provider support

@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any
 from loguru import logger
 
 from langchain.docstore.document import Document
-from keyword_search import BM25Search
+from .keyword_search import BM25Search
 
 
 class HybridSearch:

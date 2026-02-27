@@ -9,8 +9,8 @@ from pathlib import Path
 import shutil
 from loguru import logger
 
-from rag_pipeline import RAGPipeline
-from config import config
+from src.pipeline import RAGPipeline
+from src.core.config import config
 
 
 # Request/Response Models
